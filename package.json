@@ -3,19 +3,26 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
     "dotenv": "^8.2.0",
-    "ejs": "~2.6.1",
-    "express": "~4.16.1",
-    "http-errors": "~1.6.3",
-    "morgan": "~1.9.1",
+    "microsoft-cognitiveservices-speech-sdk": "^1.44.1",
+    "next": "^14.1.0",
     "node-fetch": "^2.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "uuid": "^7.0.3",
     "xmlbuilder": "^14.0.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "^14.1.0",
+    "postcss": "^8.5.5",
+    "tailwindcss": "^4.1.10"
   }
 }

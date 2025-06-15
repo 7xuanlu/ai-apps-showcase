@@ -8,7 +8,7 @@ First clone the project and install the project
 git clone https://github.com/electron-react-boilerplate/electron-react-boilerplate.git  
 
 cd <your-project-name>
-npm install
+yarn
 ```
 
 ## Development
@@ -22,12 +22,12 @@ SPEECH_SERVICE_SUBSCRIPTION_REGION=<your-subscription-region>
 
 To develop the project with hot reload
 ```
-npm run dev
+yarn dev
 ```
 
 To start the project
 ```
-npm run start
+yarn start
 ```
 
 ## License
