@@ -8,8 +8,8 @@ export async function POST(request) {
     const { text, lang = 'en-US', voice = 'en-US-JennyNeural', style = 'neutral' } = await request.json();
 
     // Get Azure Speech Service credentials from environment variables
-    const subscriptionKey = process.env.AZURE_SPEECH_KEY;
-    const region = process.env.AZURE_SPEECH_REGION;
+    const subscriptionKey = process.env.SPEECH_SERVICE_SUBSCRIPTION_KEY;
+    const region = process.env.SPEECH_SERVICE_SUBSCRIPTION_REGION;
 
     if (!subscriptionKey || !region) {
       return NextResponse.json(
