@@ -5,6 +5,7 @@ const sizeMap = {
   sm: "text-xs py-1.5 px-3 border",
   md: "text-sm py-2 px-4 border",
   lg: "text-base py-3 px-6 border",
+  landing: "text-2xl py-6 px-12 border",
 };
 
 const colorMap = {
