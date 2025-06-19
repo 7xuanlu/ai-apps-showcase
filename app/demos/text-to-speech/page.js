@@ -2,6 +2,8 @@
 
 import { useState, useRef } from "react";
 import Button from "@/app/components/Button";
+import PageHeader from "@/app/components/PageHeader";
+import SectionHeader from "@/app/components/SectionHeader";
 
 const languageOptions = [
   {
@@ -116,9 +118,7 @@ export default function TextToSpeech() {
 
   return (
     <div className="w-full max-w-4xl mx-auto mt-12 bg-white rounded-lg">
-      <h1 className="text-4xl font-bold mb-8 text-center">
-        Microsoft Speech Synthesis
-      </h1>
+      <PageHeader>Microsoft Speech Synthesis</PageHeader>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="outputLang" className="block mb-2 font-medium">
@@ -194,7 +194,7 @@ export default function TextToSpeech() {
       </form>
       {audioUrl && (
         <div className="mt-8 flex flex-col items-center">
-          <h2 className="text-xl font-semibold mb-2">Generated Audio</h2>
+          <SectionHeader>Generated Audio</SectionHeader>
           <audio
             ref={audioRef}
             controls

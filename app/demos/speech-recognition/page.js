@@ -2,6 +2,8 @@
 import { useState, useRef } from "react";
 import * as SpeechSDK from "microsoft-cognitiveservices-speech-sdk";
 import Button from "@/app/components/Button";
+import PageHeader from "@/app/components/PageHeader";
+import SectionHeader from "@/app/components/SectionHeader";
 
 async function getToken() {
   const res = await fetch("/api/token", { method: "POST" });
@@ -138,9 +140,7 @@ export default function SpeechRecognition() {
 
   return (
     <div className="w-full max-w-5xl mx-auto bg-white rounded-lg">
-      <div className="flex flex-col mb-8 items-center">
-        <h1 className="text-5xl font-bold">Microsoft Speech Recognition</h1>
-      </div>
+      <PageHeader>Microsoft Speech Recognition</PageHeader>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div>
@@ -197,9 +197,7 @@ export default function SpeechRecognition() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">
-            Once Speech Recognition
-          </h2>
+          <SectionHeader>Once Speech Recognition</SectionHeader>
           <div className="flex gap-1">
             <Button
               onClick={() => handleStart(false)}
@@ -213,9 +211,7 @@ export default function SpeechRecognition() {
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-semibold mb-2">
-            Continuous Speech Recognition
-          </h2>
+          <SectionHeader>Continuous Speech Recognition</SectionHeader>
           <div className="flex gap-1">
             <Button
               onClick={() => handleStart(true)}
@@ -231,7 +227,7 @@ export default function SpeechRecognition() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div>
-          <label className="block mb-2 font-medium">Results:</label>
+          <label className="block mb-2 font-medium">Results</label>
           <textarea
             className="w-full border rounded p-2 min-h-[120px]"
             value={results}
@@ -239,7 +235,7 @@ export default function SpeechRecognition() {
           />
         </div>
         <div>
-          <label className="block mb-2 font-medium">Events:</label>
+          <label className="block mb-2 font-medium">Events</label>
           <textarea
             className="w-full border rounded p-2 min-h-[120px]"
             value={events}

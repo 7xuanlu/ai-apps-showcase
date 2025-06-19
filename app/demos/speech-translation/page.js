@@ -2,6 +2,8 @@
 import { useState, useRef, useEffect } from "react";
 import * as SpeechSDK from "microsoft-cognitiveservices-speech-sdk";
 import Button from "@/app/components/Button";
+import PageHeader from "@/app/components/PageHeader";
+import SectionHeader from "@/app/components/SectionHeader";
 
 const languageOptions = [
   { value: "en-US", label: "English - US" },
@@ -158,12 +160,10 @@ export default function SpeechTranslation() {
 
   return (
     <div className="w-full max-w-5xl mx-auto mt-12 bg-white rounded-lg">
-      <h1 className="text-4xl font-bold mb-8 text-center">
-        Microsoft Speech Translation
-      </h1>
+      <PageHeader>Microsoft Speech Translation</PageHeader>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div>
-          <label className="block mb-2 font-medium">Input:</label>
+          <label className="block mb-2 font-medium">Input</label>
           <select
             className="w-full border rounded px-3 py-2"
             value={inputType}
@@ -184,7 +184,7 @@ export default function SpeechTranslation() {
           )}
         </div>
         <div>
-          <label className="block mb-2 font-medium">Input language:</label>
+          <label className="block mb-2 font-medium">Input language</label>
           <select
             className="w-full border rounded px-3 py-2"
             value={inputLang}
@@ -199,7 +199,7 @@ export default function SpeechTranslation() {
           </select>
         </div>
         <div>
-          <label className="block mb-2 font-medium">Output language:</label>
+          <label className="block mb-2 font-medium">Output language</label>
           <select
             className="w-full border rounded px-3 py-2"
             value={outputLang}
@@ -216,9 +216,7 @@ export default function SpeechTranslation() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <div>
-          <h2 className="text-2xl font-semibold mb-4">
-            Once Speech Translation
-          </h2>
+          <SectionHeader>Once Speech Translation</SectionHeader>
           <div className="flex gap-1">
             <Button
               color="blue"
@@ -233,9 +231,7 @@ export default function SpeechTranslation() {
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-semibold mb-4">
-            Continuous Speech Translation
-          </h2>
+          <SectionHeader>Continuous Speech Translation</SectionHeader>
           <div className="flex gap-1">
             <Button
               color="blue"
@@ -260,7 +256,7 @@ export default function SpeechTranslation() {
           />
         </div>
         <div>
-          <label className="block mb-2 font-medium">Events:</label>
+          <label className="block mb-2 font-medium">Events</label>
           <textarea
             className="w-full border rounded p-2 min-h-[120px]"
             value={events}
