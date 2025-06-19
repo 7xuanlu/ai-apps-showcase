@@ -139,12 +139,12 @@ export default function SpeechRecognition() {
   return (
     <div className="w-full max-w-5xl mx-auto bg-white rounded-lg">
       <div className="flex flex-col mb-8 items-center">
-        <h1 className="text-5xl font-bold ">Microsoft Speech Recognition</h1>
+        <h1 className="text-5xl font-bold">Microsoft Speech Recognition</h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Input</h2>
+          <h2 className="block mb-2 font-medium">Input</h2>
           <select
             className="w-full border rounded px-3 py-2"
             value={inputType}
@@ -165,7 +165,7 @@ export default function SpeechRecognition() {
           )}
         </div>
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Language</h2>
+          <h2 className="block mb-2 font-medium">Language</h2>
           <select
             className="w-full border rounded px-3 py-2"
             value={inputLang}
@@ -180,16 +180,18 @@ export default function SpeechRecognition() {
             <option value="fr-FR">French - FR</option>
           </select>
         </div>
-        <div className="w-full">
-          <h2 className="text-2xl font-semibold mb-2">Phrase List</h2>
-          <input
-            type="text"
-            className="w-full border rounded px-3 py-2"
-            placeholder="';' separated list"
-            value={phraseList}
-            onChange={(e) => setPhraseList(e.target.value)}
-            disabled={isRecognizing}
-          />
+        <div>
+          <div className="w-full">
+            <h2 className="block mb-2 font-medium">Phrase List</h2>
+            <input
+              type="text"
+              className="w-full border rounded px-3 py-2"
+              placeholder="';' separated list"
+              value={phraseList}
+              onChange={(e) => setPhraseList(e.target.value)}
+              disabled={isRecognizing}
+            />
+          </div>
         </div>
       </div>
 

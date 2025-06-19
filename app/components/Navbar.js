@@ -1,8 +1,9 @@
 'use client'
 
 import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Bars3Icon, BellIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import {  BellIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -21,17 +22,16 @@ export default function Navbar() {
       <div className="py-2 w-full flex items-center justify-end" style={{ minHeight: '4.5rem', paddingRight: '1.5rem' }}>
         <div className="flex items-center gap-4">
           {navigation.map((item) => (
-            <a
+            <Link
               key={item.name}
               href={item.href}
-              aria-current={pathname === item.href ? 'page' : undefined}
               className={classNames(
-                'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
-                'rounded-md px-4 py-2 text-base font-medium transition-colors',
+                'text-gray-500 hover:text-sky-600',
+                'rounded-md px-4 py-2 text-lg font-medium transition-colors',
               )}
             >
               {item.name}
-            </a>
+            </Link>
           ))}
           <button
             type="button"
@@ -55,28 +55,28 @@ export default function Navbar() {
               className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
             >
               <MenuItem>
-                <a
+                <Link
                   href="#"
                   className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-none"
                 >
                   Your Profile
-                </a>
+                </Link>
               </MenuItem>
               <MenuItem>
-                <a
+                <Link
                   href="#"
                   className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-none"
                 >
                   Settings
-                </a>
+                </Link>
               </MenuItem>
               <MenuItem>
-                <a
+                <Link
                   href="#"
                   className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-none"
                 >
                   Sign out
-                </a>
+                </Link>
               </MenuItem>
             </MenuItems>
           </Menu>

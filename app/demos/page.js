@@ -10,21 +10,21 @@ export default function Demos() {
           <h2>Speech to Text</h2>
           <p>Convert speech to text in real-time</p>
           <Button as={Link} href="/demos/speech-recognition" className="mt-2">
-            Try it now
+            View
           </Button>
         </div>
         <div className="service-card">
           <h2>Text to Speech</h2>
           <p>Convert text to natural speech</p>
           <Button as={Link} href="/demos/text-to-speech" className="mt-2">
-            Try it now
+            View
           </Button>
         </div>
         <div className="service-card">
           <h2>Speech Translation</h2>
           <p>Translate speech in real-time</p>
           <Button as={Link} href="/demos/speech-translation" className="mt-2">
-            Try it now
+            View
           </Button>
         </div>
       </div>
