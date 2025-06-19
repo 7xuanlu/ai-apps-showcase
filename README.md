@@ -1,4 +1,4 @@
-# Demos suite for Azure Speech Service
+# ai-apps-showcase
 Demos for Azure Speech Service using Express.js and Azure Speech SDK. You can take a quick look at this [demo website](https://speech-suite.azurewebsites.net)
 
 ## Install
