@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Button from "@/app/components/Button";
 
 const languageOptions = [
   { value: 'en-US', label: 'English - US', voices: ['en-US-AriaNeural'], styles: ['neutral', 'newscast', 'customerservice', 'chat', 'cheerful', 'empathetic'] },
@@ -113,9 +114,9 @@ export default function TextToSpeech() {
             onChange={(e) => setText(e.target.value)}
             required
           />
-          <button type="submit" className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" disabled={loading}>
+          <Button type="submit" color="blue" disabled={loading}>
             {loading ? "Converting..." : "Enter"}
-          </button>
+          </Button>
         </div>
         {error && <div className="text-red-600 font-semibold">{error}</div>}
       </form>

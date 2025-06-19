@@ -1,3 +1,4 @@
+import Button from "@/app/components/Button";
 import Link from "next/link";
 
 export default function Demos() {
@@ -8,23 +9,23 @@ export default function Demos() {
         <div className="service-card">
           <h2>Speech to Text</h2>
           <p>Convert speech to text in real-time</p>
-          <Link href="/demos/speech-recognition" className="button">
+          <Button as={Link} href="/demos/speech-recognition" color="blue">
             Try it now
-          </Link>
+          </Button>
         </div>
         <div className="service-card">
           <h2>Text to Speech</h2>
           <p>Convert text to natural-sounding speech</p>
-          <Link href="/demos/text-to-speech" className="button">
+          <Button as={Link} href="/demos/text-to-speech" color="blue">
             Try it now
-          </Link>
+          </Button>
         </div>
         <div className="service-card">
           <h2>Speech Translation</h2>
           <p>Translate speech in real-time</p>
-          <Link href="/demos/speech-translation" className="button">
+          <Button as={Link} href="/demos/speech-translation" color="blue">
             Try it now
-          </Link>
+          </Button>
         </div>
       </div>
     </div>

@@ -1,9 +1,10 @@
 import React from "react";
+import Link from "next/link";
 
 const sizeMap = {
-  sm:   "text-xs py-1.5 px-3 border",
-  md:   "text-sm py-2 px-4 border",
-  lg:   "text-base py-3 px-6 border"
+  sm: "text-xs py-1.5 px-3 border",
+  md: "text-sm py-2 px-4 border",
+  lg: "text-base py-3 px-6 border",
 };
 
 const colorMap = {
@@ -18,15 +19,26 @@ export default function Button({
   color = "blue",
   className = "",
   disabled = false,
+  href,
   ...props
 }) {
-  return (
-    <button
-      className={`btn ${sizeMap[size]} ${colorMap[color]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
-      disabled={disabled}
-      {...props}
-    >
+  const classes = `btn ${sizeMap[size]} ${colorMap[color]} ${
+    disabled ? "opacity-50 cursor-not-allowed" : ""
+  } ${className}`;
+  
+  const buttonElement = (
+    <button className={classes} disabled={disabled} {...props}>
       {children}
     </button>
   );
-} 
+
+  if (href) {
+    return (
+      <Link href={href} legacyBehavior passHref>
+        {buttonElement}
+      </Link>
+    );
+  }
+
+  return buttonElement;
+}

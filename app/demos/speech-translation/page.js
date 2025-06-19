@@ -1,6 +1,7 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import * as SpeechSDK from "microsoft-cognitiveservices-speech-sdk";
+import Button from "@/app/components/Button";
 
 const languageOptions = [
   { value: "en-US", label: "English - US" },
@@ -166,37 +167,37 @@ export default function SpeechTranslation() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
         <div>
           <h2 className="text-2xl font-semibold mb-4">Once Speech Translation</h2>
-          <button
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mr-2 disabled:opacity-50"
+          <Button
+            color="blue"
             onClick={() => handleStart(false)}
             disabled={isTranslating || (inputType === "File" && !audioFile)}
           >
             start
-          </button>
-          <button
-            className="px-6 py-2 bg-gray-400 text-white rounded ml-2 disabled:opacity-50"
+          </Button>
+          <Button
+            color="gray"
             onClick={handleStop}
             disabled={!isTranslating}
           >
             stop
-          </button>
+          </Button>
         </div>
         <div>
           <h2 className="text-2xl font-semibold mb-4">Continuous Speech Translation</h2>
-          <button
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mr-2 disabled:opacity-50"
+          <Button
+            color="blue"
             onClick={() => handleStart(true)}
             disabled={isTranslating || (inputType === "File" && !audioFile)}
           >
             start
-          </button>
-          <button
-            className="px-6 py-2 bg-gray-400 text-white rounded ml-2 disabled:opacity-50"
+          </Button>
+          <Button
+            color="gray"
             onClick={handleStop}
             disabled={!isTranslating}
           >
             stop
-          </button>
+          </Button>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
