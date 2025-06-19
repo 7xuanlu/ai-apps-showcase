@@ -112,8 +112,8 @@ export default function SpeechTranslation() {
   };
 
   return (
-    <div className="w-full max-w-5xl mx-auto mt-12 bg-white rounded-lg shadow p-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">Microsoft Cognitive Services: Speech Translation</h1>
+    <div className="w-full max-w-5xl mx-auto mt-12 bg-white rounded-lg">
+      <h1 className="text-4xl font-bold mb-8 text-center">Microsoft Speech Translation</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div>
           <label className="block mb-2 font-medium">Input:</label>

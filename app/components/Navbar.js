@@ -17,7 +17,7 @@ export default function Navbar() {
   const pathname = usePathname();
 
   return (
-    <Disclosure as="nav" className="bg-white w-full shadow-xs relative z-20" style={{ marginBottom: '-2.5rem' }}>
+    <Disclosure as="nav" className="bg-white w-full shadow-xs relative z-20">
       <div className="py-2 w-full flex items-center justify-end" style={{ minHeight: '4.5rem', paddingRight: '1.5rem' }}>
         <div className="flex items-center gap-4">
           {navigation.map((item) => (

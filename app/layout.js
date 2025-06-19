@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className="min-h-screen flex flex-col">
         <Navbar />
-        <main className="flex-1 container mx-auto px-4 flex flex-col items-center justify-center">
+        <main className="flex-1 container mx-auto px-4 flex flex-col justify-center">
           {children}
         </main>
         <Footer />

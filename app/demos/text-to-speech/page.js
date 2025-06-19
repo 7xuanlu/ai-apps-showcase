@@ -77,8 +77,8 @@ export default function TextToSpeech() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto mt-12 bg-white rounded-lg shadow p-8">
-      <h1 className="text-4xl font-bold mb-8 text-center">Microsoft Cognitive Services: Speech Synthesis</h1>
+    <div className="w-full max-w-4xl mx-auto mt-12 bg-white rounded-lg">
+      <h1 className="text-4xl font-bold mb-8 text-center">Microsoft Speech Synthesis</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="outputLang" className="block mb-2 font-medium">Output language:</label>
