@@ -4,6 +4,7 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import {  BellIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
+import SignIn from './sign-in'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -101,6 +102,7 @@ export default function Navbar() {
           ))}
         </div>
       </DisclosurePanel>
+      <SignIn/>
     </Disclosure>
   )
 }
