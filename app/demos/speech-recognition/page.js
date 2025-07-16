@@ -4,6 +4,8 @@ import * as SpeechSDK from "microsoft-cognitiveservices-speech-sdk";
 import Button from "@/app/components/Button";
 import PageHeader from "@/app/components/PageHeader";
 import SectionHeader from "@/app/components/SectionHeader";
+import Banner from "@/app/components/Banner";
+import FeatureGuard from "@/app/components/FeatureGuard";
 
 async function getToken() {
   const res = await fetch("/api/token", { method: "POST" });
@@ -141,8 +143,10 @@ export default function SpeechRecognition() {
   return (
     <div className="w-full max-w-5xl mx-auto bg-white rounded-lg">
       <PageHeader>Microsoft Speech Recognition</PageHeader>
+      <Banner />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <FeatureGuard>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div>
           <h2 className="block mb-2 font-medium">Input</h2>
           <select
@@ -242,7 +246,8 @@ export default function SpeechRecognition() {
             readOnly
           />
         </div>
-      </div>
+        </div>
+      </FeatureGuard>
     </div>
   );
 }

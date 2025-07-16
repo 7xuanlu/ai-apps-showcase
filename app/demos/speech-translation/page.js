@@ -4,6 +4,8 @@ import * as SpeechSDK from "microsoft-cognitiveservices-speech-sdk";
 import Button from "@/app/components/Button";
 import PageHeader from "@/app/components/PageHeader";
 import SectionHeader from "@/app/components/SectionHeader";
+import Banner from "@/app/components/Banner";
+import FeatureGuard from "@/app/components/FeatureGuard";
 
 const languageOptions = [
   { value: "en-US", label: "English - US" },
@@ -161,7 +163,9 @@ export default function SpeechTranslation() {
   return (
     <div className="w-full max-w-5xl mx-auto mt-12 bg-white rounded-lg">
       <PageHeader>Microsoft Speech Translation</PageHeader>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <Banner />
+      <FeatureGuard>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div>
           <label className="block mb-2 font-medium">Input</label>
           <select
@@ -263,7 +267,8 @@ export default function SpeechTranslation() {
             readOnly
           />
         </div>
-      </div>
+        </div>
+      </FeatureGuard>
     </div>
   );
 }
