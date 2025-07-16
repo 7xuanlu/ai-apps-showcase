@@ -8,7 +8,7 @@ import AuthButtons from './AuthButtons'
 
 const navigation = [
   { name: 'Home', href: '/' },
-  { name: 'Demos', href: '/demos' },
+  { name: 'Showcase', href: '/demos' },
   { name: 'Auth Demo', href: '/demo-auth' },
 ]
 

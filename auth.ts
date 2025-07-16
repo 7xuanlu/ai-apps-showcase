@@ -3,16 +3,7 @@ import GoogleProvider from "next-auth/providers/google"
 import GitHubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
-
-// Mock user database - in production, use a real database
-const users = [
-  {
-    id: "1",
-    name: "Demo User",
-    email: "demo@example.com",
-    password: "$2a$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1m", // password: demo123
-  },
-]
+import { prisma } from "@/lib/prisma"
 
 // Validate required environment variables
 const requiredEnvVars = {
@@ -57,7 +48,9 @@ export default NextAuth({
           return null
         }
 
-        const user = users.find(user => user.email === credentials.email)
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        })
         
         if (!user) {
           console.log('User not found:', credentials.email);
@@ -83,7 +76,7 @@ export default NextAuth({
     })
   ],
   pages: {
-    signIn: '/login',
+    signIn: '/auth',
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -94,9 +87,9 @@ export default NextAuth({
       return token
     },
     async session({ session, token }) {
-      console.log('Session callback:', { sessionUserId: session.user.id, tokenId: token.id });
+      console.log('Session callback:', { sessionUserId: (session.user as any).id, tokenId: token.id });
       if (token) {
-        session.user.id = token.id as string
+        (session.user as any).id = token.id as string
       }
       return session
     }

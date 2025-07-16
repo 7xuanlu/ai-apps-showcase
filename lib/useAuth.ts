@@ -8,7 +8,7 @@ export function useAuth() {
   const router = useRouter();
 
   const login = () => {
-    router.push('/login');
+    router.push('/auth');
   };
 
   const logout = async () => {
