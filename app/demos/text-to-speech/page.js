@@ -4,6 +4,8 @@ import { useState, useRef } from "react";
 import Button from "@/app/components/Button";
 import PageHeader from "@/app/components/PageHeader";
 import SectionHeader from "@/app/components/SectionHeader";
+import Banner from "@/app/components/Banner";
+import FeatureGuard from "@/app/components/FeatureGuard";
 
 const languageOptions = [
   {
@@ -119,7 +121,9 @@ export default function TextToSpeech() {
   return (
     <div className="w-full max-w-4xl mx-auto mt-12 bg-white rounded-lg">
       <PageHeader>Microsoft Speech Synthesis</PageHeader>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <Banner />
+      <FeatureGuard>
+        <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="outputLang" className="block mb-2 font-medium">
             Language
@@ -191,19 +195,20 @@ export default function TextToSpeech() {
           </div>
         </div>
         {error && <div className="text-red-600 font-semibold">{error}</div>}
-      </form>
-      {audioUrl && (
-        <div className="mt-8 flex flex-col items-center">
-          <SectionHeader>Generated Audio</SectionHeader>
-          <audio
-            ref={audioRef}
-            controls
-            src={audioUrl}
-            className="w-full max-w-md"
-            onError={handleAudioError}
-          />
-        </div>
-      )}
+        </form>
+        {audioUrl && (
+          <div className="mt-8 flex flex-col items-center">
+            <SectionHeader>Generated Audio</SectionHeader>
+            <audio
+              ref={audioRef}
+              controls
+              src={audioUrl}
+              className="w-full max-w-md"
+              onError={handleAudioError}
+            />
+          </div>
+        )}
+      </FeatureGuard>
     </div>
   );
 }
