@@ -14,3 +14,4 @@ yarn-error.log
 /generated/prisma
 .kiro/*
 tsconfig.tsbuildinfo
+.vercel
