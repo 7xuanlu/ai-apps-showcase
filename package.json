@@ -27,12 +27,12 @@
     "db:validate": "node scripts/test-db-connection.js",
     "db:status": "node scripts/migration-utils.js detect",
     "db:create-migration": "node scripts/migration-utils.js create-migration",
-    "db:setup": "npm run db:generate-schema && npm run db:init && npm run db:seed",
-    "db:setup:dev": "cross-env NODE_ENV=development npm run db:setup",
-    "db:setup:sqlite": "cross-env DATABASE_PROVIDER=sqlite NODE_ENV=development npm run db:setup",
-    "db:setup:postgresql": "cross-env DATABASE_PROVIDER=postgresql NODE_ENV=production npm run db:setup",
-    "db:fresh": "npm run db:reset && npm run db:setup",
-    "db:fresh:dev": "cross-env NODE_ENV=development npm run db:fresh"
+    "db:setup": "yarn db:generate-schema && yarn db:init && yarn db:seed",
+    "db:setup:dev": "cross-env NODE_ENV=development yarn db:setup",
+    "db:setup:sqlite": "cross-env DATABASE_PROVIDER=sqlite NODE_ENV=development yarn db:setup",
+    "db:setup:postgresql": "cross-env DATABASE_PROVIDER=postgresql NODE_ENV=production yarn db:setup",
+    "db:fresh": "yarn db:reset && yarn db:setup",
+    "db:fresh:dev": "cross-env NODE_ENV=development yarn db:fresh"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
