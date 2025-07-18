@@ -4,6 +4,9 @@ import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Providers from './components/Providers'
 
+// Import startup validation to ensure it runs when the application starts
+import '../lib/startup-validation'
+
 export const metadata = {
   title: 'Lucian\'s AI Portfolio',
   description: 'A suite of AI applications demos',

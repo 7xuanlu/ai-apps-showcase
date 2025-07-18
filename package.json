@@ -1,6 +1,6 @@
 {
   "name": "ai-apps-showcase",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -32,7 +32,11 @@
     "db:setup:sqlite": "cross-env DATABASE_PROVIDER=sqlite NODE_ENV=development yarn db:setup",
     "db:setup:postgresql": "cross-env DATABASE_PROVIDER=postgresql NODE_ENV=production yarn db:setup",
     "db:fresh": "yarn db:reset && yarn db:setup",
-    "db:fresh:dev": "cross-env NODE_ENV=development yarn db:fresh"
+    "db:fresh:dev": "cross-env NODE_ENV=development yarn db:fresh",
+    "env:validate": "node scripts/validate-environment.js",
+    "env:validate:dev": "cross-env NODE_ENV=development node scripts/validate-environment.js",
+    "env:validate:prod": "cross-env NODE_ENV=production node scripts/validate-environment.js",
+    "env:test": "node scripts/test-env-validation.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",

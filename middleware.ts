@@ -1,10 +1,16 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { envValidationMiddleware } from "./lib/env-validation-middleware";
 
 export function middleware(request: NextRequest) {
-  // For now, just pass through all requests
-  // We can add authentication logic later
-  return NextResponse.next()
+  // First, validate environment variables
+  const envValidationResult = envValidationMiddleware(request);
+  if (envValidationResult) {
+    return envValidationResult;
+  }
+
+  // If environment validation passes, continue with other middleware
+  return NextResponse.next();
 }
 
 export const config = {
@@ -17,6 +23,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|public).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|public).*)",
   ],
-}
+};

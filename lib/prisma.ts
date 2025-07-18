@@ -78,10 +78,45 @@ function initializePrismaClient(): PrismaClient {
 }
 
 /**
- * Enhanced error handling for database operations
+ * Provides environment-specific troubleshooting guidance
  */
-export async function connectWithRetry(maxRetries = 3, delay = 1000): Promise<void> {
+function getEnvironmentSpecificTroubleshooting(): string {
+  const config = getEnvironmentConfig()
+  
+  if (config.nodeEnv === 'development') {
+    if (config.databaseProvider === 'sqlite') {
+      return [
+        '5. For SQLite development:',
+        '   - Check if the SQLite database file exists at the specified path',
+        '   - Ensure the application has write permissions to the database file',
+        '   - Try deleting the database file to let it be recreated automatically'
+      ].join('\n')
+    } else {
+      return [
+        '5. For PostgreSQL development:',
+        '   - Verify PostgreSQL is running locally',
+        '   - Check that the database specified in DATABASE_URL exists',
+        '   - Ensure the database user has proper permissions'
+      ].join('\n')
+    }
+  } else {
+    return [
+      '5. For production environment:',
+      '   - Check Supabase dashboard for database status',
+      '   - Verify that IP restrictions are not blocking the connection',
+      '   - Ensure SSL is properly configured for secure connections',
+      '   - Check that the database connection limit has not been exceeded'
+    ].join('\n')
+  }
+}
+
+/**
+ * Enhanced error handling for database operations with exponential backoff
+ * Implements connection retry logic with detailed error reporting
+ */
+export async function connectWithRetry(maxRetries = 5, initialDelay = 1000): Promise<void> {
   let lastError: Error | null = null
+  let delay = initialDelay
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -90,17 +125,48 @@ export async function connectWithRetry(maxRetries = 3, delay = 1000): Promise<vo
       return
     } catch (error) {
       lastError = error as Error
-      console.warn(`⚠️  Database connection attempt ${attempt}/${maxRetries} failed:`, error)
+      const errorMessage = lastError?.message || 'Unknown error'
+      
+      // Categorize error for better diagnostics
+      let errorType = 'connection'
+      if (errorMessage.includes('timeout')) {
+        errorType = 'timeout'
+      } else if (errorMessage.includes('authentication')) {
+        errorType = 'authentication'
+      } else if (errorMessage.includes('permission')) {
+        errorType = 'permission'
+      }
+      
+      console.warn(
+        `⚠️  Database ${errorType} error (attempt ${attempt}/${maxRetries}): ${errorMessage}`
+      )
       
       if (attempt < maxRetries) {
         console.log(`🔄 Retrying in ${delay}ms...`)
         await new Promise(resolve => setTimeout(resolve, delay))
-        delay *= 2 // Exponential backoff
+        
+        // Exponential backoff with jitter for better distributed retries
+        const jitter = Math.floor(Math.random() * 200) - 100 // ±100ms jitter
+        delay = Math.min(delay * 2 + jitter, 30000) // Cap at 30 seconds
       }
     }
   }
   
-  throw new Error(`Failed to connect to database after ${maxRetries} attempts. Last error: ${lastError?.message}`)
+  // Detailed error message with troubleshooting guidance
+  const errorDetails = lastError?.message || 'Unknown error'
+  const errorMessage = [
+    `❌ Failed to connect to database after ${maxRetries} attempts.`,
+    `Last error: ${errorDetails}`,
+    '',
+    'Troubleshooting steps:',
+    '1. Check that your database server is running',
+    '2. Verify your DATABASE_URL environment variable is correct',
+    '3. Ensure network connectivity to the database server',
+    '4. Check database credentials and permissions',
+    getEnvironmentSpecificTroubleshooting()
+  ].join('\n')
+  
+  throw new Error(errorMessage)
 }
 
 /**
@@ -126,10 +192,83 @@ if (process.env.NODE_ENV !== 'production') {
 // Export database configuration for external use
 export const databaseConfig = createDatabaseConfig()
 
-// Validate database connection on module load (only in production)
+/**
+ * Creates a fallback SQLite database for development when main connection fails
+ * This provides a graceful fallback mechanism for development environment
+ */
+export async function createFallbackDatabase(): Promise<boolean> {
+  const config = getEnvironmentConfig()
+  
+  // Only create fallback in development environment
+  if (config.nodeEnv !== 'development') {
+    return false
+  }
+  
+  try {
+    console.log('🔄 Attempting to create fallback SQLite database for development...')
+    
+    // If we're already using SQLite, just ensure the file exists
+    if (config.databaseProvider === 'sqlite') {
+      const fs = require('fs')
+      const path = require('path')
+      
+      // Extract file path from SQLite URL (remove file: prefix)
+      const dbPath = config.databaseUrl.replace(/^file:/, '')
+      const dbDir = path.dirname(dbPath)
+      
+      // Ensure directory exists
+      if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true })
+        console.log(`✅ Created directory: ${dbDir}`)
+      }
+      
+      // Touch the file if it doesn't exist
+      if (!fs.existsSync(dbPath)) {
+        fs.writeFileSync(dbPath, '')
+        console.log(`✅ Created empty SQLite database file: ${dbPath}`)
+      }
+      
+      return true
+    } else {
+      // We're using PostgreSQL but it failed, so we'll create a temporary SQLite fallback
+      console.log('⚠️ PostgreSQL connection failed in development, creating SQLite fallback')
+      console.log('⚠️ Note: This is a TEMPORARY fallback for development only')
+      console.log('⚠️ Some features may not work correctly with this fallback database')
+      
+      // Create a temporary SQLite database in memory
+      // This is not persisted but allows the app to start
+      process.env.DATABASE_PROVIDER = 'sqlite'
+      process.env.DATABASE_URL = 'file:./prisma/fallback.db'
+      
+      return true
+    }
+  } catch (error) {
+    console.error('❌ Failed to create fallback database:', error)
+    return false
+  }
+}
+
+// Validate database connection on module load
 if (process.env.NODE_ENV === 'production') {
+  // In production, fail fast if database connection fails
   connectWithRetry().catch(error => {
     console.error('❌ Critical: Failed to establish database connection on startup:', error)
     process.exit(1)
+  })
+} else {
+  // In development, try to connect with retry and fallback to SQLite if needed
+  connectWithRetry().catch(async error => {
+    console.warn('⚠️ Database connection failed in development environment')
+    
+    // Try to create fallback database
+    const fallbackCreated = await createFallbackDatabase()
+    
+    if (fallbackCreated) {
+      console.log('✅ Fallback database created successfully')
+      console.log('⚠️ Running in fallback mode - some features may be limited')
+    } else {
+      console.error('❌ Failed to create fallback database')
+      console.error('⚠️ Application may not function correctly without database connection')
+    }
   })
 }
