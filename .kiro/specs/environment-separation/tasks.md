@@ -71,7 +71,8 @@
     - Configure database connection settings for production
     - _Requirements: 2.2, 2.3, 4.2_
 
-- [ ] 6. Update authentication configuration for multi-environment
+- [x] 6. Update authentication configuration for multi-environment
+
 
   - Modify auth.ts to handle environment-specific OAuth settings
   - Add environment variable validation for authentication providers
@@ -86,7 +87,6 @@
     - Document database URL and API key configuration
     - Include instructions for running migrations on Supabase
     - _Requirements: 2.1, 2.3, 5.3_
-
 
   - [ ] 7.2 Write Vercel deployment guide
     - Create step-by-step Vercel deployment instructions

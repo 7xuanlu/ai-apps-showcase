@@ -4,77 +4,93 @@ import GitHubProvider from "next-auth/providers/github"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
 import { prisma } from "@/lib/prisma"
+import { getEnvironmentConfig, type EnvironmentConfig } from "@/lib/env-config"
 
-// Validate required environment variables
-const requiredEnvVars = {
-  NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-  NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
+// Load and validate environment configuration
+let envConfig: EnvironmentConfig;
+try {
+  envConfig = getEnvironmentConfig();
+} catch (error) {
+  console.error("❌ Failed to load environment configuration for authentication:");
+  console.error(error instanceof Error ? error.message : error);
+  throw new Error("Authentication configuration failed due to invalid environment setup");
 }
 
-// Check for missing environment variables
-const missingEnvVars = Object.entries(requiredEnvVars)
-  .filter(([_, value]) => !value)
-  .map(([key]) => key)
+// Build providers array dynamically based on available configuration
+const providers = [];
 
-if (missingEnvVars.length > 0) {
-  console.warn('Missing required environment variables:', missingEnvVars)
+// Add OAuth providers if configured
+if (envConfig.oauthProviders?.google) {
+  providers.push(
+    GoogleProvider({
+      clientId: envConfig.oauthProviders.google.clientId,
+      clientSecret: envConfig.oauthProviders.google.clientSecret,
+    })
+  );
 }
 
-// Generate a fallback secret if none is provided
-const secret = process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development-only'
+if (envConfig.oauthProviders?.github) {
+  providers.push(
+    GitHubProvider({
+      clientId: envConfig.oauthProviders.github.clientId,
+      clientSecret: envConfig.oauthProviders.github.clientSecret,
+    })
+  );
+}
+
+// Always add credentials provider for email/password authentication
+providers.push(
+  CredentialsProvider({
+    name: "credentials",
+    credentials: {
+      email: { label: "Email", type: "email" },
+      password: { label: "Password", type: "password" }
+    },
+    async authorize(credentials) {
+      console.log('Credentials authorize called with:', { email: credentials?.email });
+      
+      if (!credentials?.email || !credentials?.password) {
+        console.log('Missing credentials');
+        return null
+      }
+
+      const user = await prisma.user.findUnique({
+        where: { email: credentials.email }
+      })
+      
+      if (!user) {
+        console.log('User not found:', credentials.email);
+        return null
+      }
+
+      const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password)
+      
+      console.log('Password validation result:', isPasswordValid);
+      
+      if (!isPasswordValid) {
+        console.log('Invalid password for user:', credentials.email);
+        return null
+      }
+
+      console.log('User authenticated successfully:', user.email);
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      }
+    }
+  })
+);
+
+// Log configured providers for debugging
+console.log(`🔐 NextAuth configured with ${providers.length} providers for ${envConfig.nodeEnv} environment`);
+if (envConfig.oauthProviders?.google) console.log('  ✅ Google OAuth enabled');
+if (envConfig.oauthProviders?.github) console.log('  ✅ GitHub OAuth enabled');
+console.log('  ✅ Credentials provider enabled');
 
 export default NextAuth({
-  secret: secret,
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-    }),
-    GitHubProvider({
-      clientId: process.env.GITHUB_CLIENT_ID || '',
-      clientSecret: process.env.GITHUB_CLIENT_SECRET || '',
-    }),
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" }
-      },
-      async authorize(credentials) {
-        console.log('Credentials authorize called with:', { email: credentials?.email });
-        
-        if (!credentials?.email || !credentials?.password) {
-          console.log('Missing credentials');
-          return null
-        }
-
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email }
-        })
-        
-        if (!user) {
-          console.log('User not found:', credentials.email);
-          return null
-        }
-
-        const isPasswordValid = await bcrypt.compare(credentials.password as string, user.password)
-        
-        console.log('Password validation result:', isPasswordValid);
-        
-        if (!isPasswordValid) {
-          console.log('Invalid password for user:', credentials.email);
-          return null
-        }
-
-        console.log('User authenticated successfully:', user.email);
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        }
-      }
-    })
-  ],
+  secret: envConfig.nextAuthSecret,
+  providers,
   pages: {
     signIn: '/auth',
   },
@@ -97,5 +113,5 @@ export default NextAuth({
   session: {
     strategy: "jwt",
   },
-  debug: process.env.NODE_ENV === 'development',
+  debug: envConfig.nodeEnv === 'development',
 })

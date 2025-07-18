@@ -56,6 +56,14 @@ const REQUIRED_VARS = {
 } as const;
 
 /**
+ * OAuth provider configuration pairs that must be provided together
+ */
+const OAUTH_PROVIDER_PAIRS = {
+  google: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
+  github: ["GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"],
+} as const;
+
+/**
  * Validates that all required environment variables are present
  */
 function validateRequiredVariables(env: Environment): void {
@@ -106,6 +114,53 @@ function validateDatabaseConfig(provider: string, url: string): void {
     throw new Error(
       `❌ PostgreSQL DATABASE_URL must start with "postgres" but got: "${url}"`
     );
+  }
+}
+
+/**
+ * Validates OAuth provider configurations
+ * Ensures that if one part of an OAuth provider is configured, both parts are present
+ */
+function validateOAuthProviders(): void {
+  const warnings: string[] = [];
+  const errors: string[] = [];
+
+  for (const [providerName, [clientIdVar, clientSecretVar]] of Object.entries(OAUTH_PROVIDER_PAIRS)) {
+    const clientId = process.env[clientIdVar];
+    const clientSecret = process.env[clientSecretVar];
+
+    if (clientId && !clientSecret) {
+      errors.push(`${providerName.toUpperCase()} OAuth: ${clientIdVar} is set but ${clientSecretVar} is missing`);
+    } else if (!clientId && clientSecret) {
+      errors.push(`${providerName.toUpperCase()} OAuth: ${clientSecretVar} is set but ${clientIdVar} is missing`);
+    } else if (clientId && clientSecret) {
+      // Both are present - this is good
+      continue;
+    } else {
+      // Neither is present - this is optional, just log for info
+      warnings.push(`${providerName.toUpperCase()} OAuth not configured (optional)`);
+    }
+  }
+
+  // Log warnings for informational purposes
+  if (warnings.length > 0) {
+    console.log("ℹ️  OAuth Provider Status:");
+    warnings.forEach(warning => console.log(`  - ${warning}`));
+  }
+
+  // Throw errors for incomplete configurations
+  if (errors.length > 0) {
+    const errorMessage = [
+      "❌ Invalid OAuth provider configuration:",
+      ...errors.map(error => `  - ${error}`),
+      "",
+      "Each OAuth provider requires both client ID and client secret.",
+      "Either provide both values or remove both to disable the provider.",
+      "",
+      "See .env.example for proper OAuth configuration examples.",
+    ].join("\n");
+
+    throw new Error(errorMessage);
   }
 }
 
@@ -185,6 +240,9 @@ export function loadEnvironmentConfig(): EnvironmentConfig {
 
   // Validate required variables
   validateRequiredVariables(env);
+
+  // Validate OAuth provider configurations
+  validateOAuthProviders();
 
   // Create database configuration
   const dbConfig = createDatabaseConfig(env);

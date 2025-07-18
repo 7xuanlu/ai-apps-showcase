@@ -4,7 +4,6 @@ const nextConfig = {
   
   // Environment variable validation
   env: {
-    NODE_ENV: process.env.NODE_ENV,
     DATABASE_PROVIDER: process.env.DATABASE_PROVIDER,
   },
 
