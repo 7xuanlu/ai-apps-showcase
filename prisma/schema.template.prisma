@@ -10,7 +10,7 @@ generator client {
 datasource db {
   // The provider will be replaced with either "sqlite" or "postgresql"
   // based on the DATABASE_PROVIDER environment variable
-  provider = "sqlite"
+  provider = "PROVIDER_PLACEHOLDER"
   
   // Database connection URL from environment variable
   // For SQLite: "file:./dev.db"
