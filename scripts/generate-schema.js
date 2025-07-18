@@ -62,7 +62,7 @@ try {
   fs.writeFileSync(schemaOutputPath, generatedSchema);
   
   console.log(`Generated Prisma schema with provider: ${databaseProvider}`);
-  console.log(`Database URL format: ${databaseProvider === 'sqlite' ? 'file:./dev.db' : 'postgresql://user:password@host:port/database'}`);
+  console.log(`Database URL format: ${databaseProvider === 'sqlite' ? 'file:./prisma/dev.db' : 'postgresql://user:password@host:port/database'}`);
 } catch (error) {
   console.error('Error generating schema:', error.message);
   process.exit(1);

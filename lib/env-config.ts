@@ -138,8 +138,8 @@ export function generateDatabaseUrl(
   provider: DatabaseProvider
 ): string {
   if (provider === "sqlite") {
-    // For SQLite, use local file in development
-    return env === "development" ? "file:./dev.db" : "file:./prod.db";
+    // For SQLite, use local file in prisma directory
+    return env === "development" ? "file:./prisma/dev.db" : "file:./prisma/prod.db";
   }
 
   if (provider === "postgresql") {
