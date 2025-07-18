@@ -235,12 +235,8 @@ export async function createFallbackDatabase(): Promise<boolean> {
       console.log('⚠️ Note: This is a TEMPORARY fallback for development only')
       console.log('⚠️ Some features may not work correctly with this fallback database')
       
-      // Create a temporary SQLite database in memory
-      // This is not persisted but allows the app to start
-      process.env.DATABASE_PROVIDER = 'sqlite'
-      process.env.DATABASE_URL = 'file:./prisma/fallback.db'
-      
-      return true
+      // For now, just return false to avoid compilation issues
+      return false
     }
   } catch (error) {
     console.error('❌ Failed to create fallback database:', error)

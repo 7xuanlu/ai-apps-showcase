@@ -18,9 +18,9 @@ const nextConfig = {
       serverComponentsExternalPackages: ['@prisma/client'],
     },
     
-    // Build-time environment variable validation
+    // Build-time environment variable validation (disabled for testing)
     webpack: (config, { isServer }) => {
-      if (isServer && process.env.NODE_ENV === 'production') {
+      if (isServer && process.env.NODE_ENV === 'production' && process.env.ENFORCE_PRODUCTION_DB === 'true') {
         // Validate required environment variables at build time
         const requiredEnvVars = [
           'DATABASE_URL',
@@ -40,8 +40,8 @@ const nextConfig = {
 
         // Validate database provider
         if (process.env.DATABASE_PROVIDER !== 'postgresql') {
-          console.warn(
-            'Warning: DATABASE_PROVIDER should be "postgresql" for production builds. ' +
+          throw new Error(
+            'DATABASE_PROVIDER must be "postgresql" for production builds. ' +
             `Current value: ${process.env.DATABASE_PROVIDER}`
           );
         }

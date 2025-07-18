@@ -90,7 +90,12 @@ function validateRequiredVariables(env: Environment): void {
       "See .env.example for required variable templates.",
     ].join("\n");
 
-    throw new Error(errorMessage);
+    // Only throw error if we're not in build time
+    if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PHASE) {
+      throw new Error(errorMessage);
+    } else {
+      console.warn(`⚠️  ${errorMessage}`);
+    }
   }
 }
 

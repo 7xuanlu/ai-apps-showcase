@@ -89,6 +89,9 @@ jobs:
       - name: Generate production schema
         run: yarn db:generate-schema:postgresql
 
+      - name: Build with production database enforcement
+        run: ENFORCE_PRODUCTION_DB=true yarn build
+
       - name: Deploy to Vercel (Production)
         uses: amondnet/vercel-action@v25
         with:

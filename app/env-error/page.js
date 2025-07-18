@@ -1,9 +1,9 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 
-export default function EnvironmentErrorPage() {
+function EnvironmentErrorContent() {
   const searchParams = useSearchParams()
   const [errors, setErrors] = useState([])
   const [warnings, setWarnings] = useState([])
@@ -153,5 +153,28 @@ export default function EnvironmentErrorPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function EnvironmentErrorPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+        <div className="bg-white rounded-lg shadow-lg p-6 max-w-4xl w-full">
+          <div className="flex items-center mb-6">
+            <div className="bg-red-100 p-3 rounded-full">
+              <svg className="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <h1 className="text-2xl font-bold">Loading...</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <EnvironmentErrorContent />
+    </Suspense>
   )
 }

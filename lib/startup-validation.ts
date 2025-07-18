@@ -27,7 +27,7 @@ export function initializeApplication(): void {
 }
 
 // Auto-initialize when this module is imported (for server-side)
-if (typeof window === 'undefined') {
-  // Only run on server-side (Node.js environment)
+if (typeof window === 'undefined' && !process.env.NEXT_PHASE) {
+  // Only run on server-side (Node.js environment) and not during build
   initializeApplication()
 }
