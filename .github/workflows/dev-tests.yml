@@ -1,0 +1,35 @@
+name: Development Environment Tests
+
+on:
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  test-development:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Test SQLite development environment
+        run: yarn db:setup:sqlite
+
+      - name: Run development tests
+        run: yarn env:validate:dev
+
+      - name: Test development build
+        run: yarn build
