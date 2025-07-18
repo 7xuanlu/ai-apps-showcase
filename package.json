@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "prisma generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:generate-schema": "node scripts/generate-schema.js",
     "db:generate-schema:sqlite": "cross-env DATABASE_PROVIDER=sqlite node scripts/generate-schema.js",

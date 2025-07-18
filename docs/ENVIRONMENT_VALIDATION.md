@@ -271,6 +271,55 @@ The validation system integrates with:
 - **Development tools**: Validation scripts and testing
 - **Error handling**: Custom error pages and logging
 
+## Vercel Deployment
+
+### Build-Time Compatibility
+
+The validation system has been updated to handle Vercel deployments:
+
+- **Build-Time Detection**: Automatically detects Vercel build environment
+- **Minimal Configuration**: Provides fallback configurations during build
+- **Prisma Generation**: Automatically runs `prisma generate` during build
+- **Environment Flexibility**: Allows missing variables during build time
+
+### Vercel-Specific Configuration
+
+```javascript
+// Automatic detection of Vercel build environment
+if (process.env.VERCEL || (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE)) {
+  // Use build-time compatible configuration
+}
+```
+
+### Build Script Updates
+
+The build process now includes:
+
+```json
+{
+  "scripts": {
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate"
+  }
+}
+```
+
+### Environment Variables for Vercel
+
+Required in Vercel dashboard:
+
+- `NEXTAUTH_URL` - Your Vercel app URL
+- `NEXTAUTH_SECRET` - Secure secret (32+ characters)
+- `DATABASE_URL` - Supabase connection string
+- `DATABASE_PROVIDER` - Set to "postgresql"
+- `SUPABASE_URL` - Your Supabase project URL
+- `SUPABASE_ANON_KEY` - Your Supabase anonymous key
+
+Optional OAuth variables:
+
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`
+
 ## Future Enhancements
 
 Potential improvements:
@@ -280,3 +329,4 @@ Potential improvements:
 - **Metrics**: Validation success/failure tracking
 - **Integration tests**: End-to-end validation testing
 - **Documentation generation**: Auto-generated config docs
+- **Vercel Integration**: One-click environment setup for Vercel

@@ -1,349 +1,276 @@
 # Vercel Deployment Guide
 
-This guide provides step-by-step instructions for deploying your environment-separated Next.js application to Vercel with proper GitHub integration and environment variable configuration.
+This guide covers deploying the AI Apps Showcase to Vercel with proper environment configuration.
 
-## Prerequisites
+## Quick Start
 
-- A Vercel account (sign up at [vercel.com](https://vercel.com))
-- A GitHub repository with your application code
-- Completed Supabase setup (see [SUPABASE_SETUP.md](SUPABASE_SETUP.md))
-- OAuth provider credentials (GitHub, Google, etc.)
+1. **Fork or clone the repository**
+2. **Connect to Vercel** via GitHub integration
+3. **Configure environment variables** (see below)
+4. **Deploy**
 
-## Step 1: Prepare Your Repository
+## Environment Variables Setup
 
-### Ensure Required Files Are Present
+### Required Variables
 
-Verify these files exist in your repository:
-
-1. **`vercel.json`** - Deployment configuration
-2. **`.env.example`** - Template for required environment variables
-3. **`package.json`** - Dependencies and build scripts
-4. **`prisma/schema.prisma`** - Database schema
-
-### Commit and Push Changes
+Add these in your Vercel dashboard (Settings → Environment Variables):
 
 ```bash
-# Ensure all changes are committed
+# Application Configuration
+NEXTAUTH_URL=https://your-app-name.vercel.app
+NEXTAUTH_SECRET=your-secure-32-character-secret-here
+
+# Database Configuration
+DATABASE_PROVIDER=postgresql
+DATABASE_URL=postgresql://user:password@host:port/database
+
+# Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+### Optional OAuth Variables
+
+```bash
+# Google OAuth (optional)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# GitHub OAuth (optional)
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+```
+
+## Step-by-Step Deployment
+
+### 1. Prepare Your Repository
+
+Ensure your repository has the latest changes:
+
+```bash
 git add .
-git commit -m "Prepare for Vercel deployment"
+git commit -m "Fix Vercel deployment configuration"
 git push origin main
 ```
 
-## Step 2: Connect GitHub Repository to Vercel
+### 2. Create Vercel Project
 
-### Import Project to Vercel
+1. Go to [vercel.com](https://vercel.com)
+2. Click "New Project"
+3. Import your GitHub repository
+4. Select the repository
+5. Click "Deploy" (initial deploy will fail - this is expected)
 
-1. **Sign in to Vercel Dashboard**
-   - Go to [vercel.com/dashboard](https://vercel.com/dashboard)
-   - Sign in with your account
+### 3. Configure Environment Variables
 
-2. **Import Git Repository**
-   - Click "New Project" or "Add New..."
-   - Select "Import Git Repository"
-   - Choose your GitHub account and repository
-   - Click "Import"
+In the Vercel dashboard:
 
-3. **Configure Project Settings**
-   - **Project Name**: Use a descriptive name (e.g., "my-app-production")
-   - **Framework Preset**: Next.js (should be auto-detected)
-   - **Root Directory**: Leave as default (unless your Next.js app is in a subdirectory)
-   - **Build and Output Settings**: Leave as default (configured via vercel.json)
+1. Go to your project
+2. Click "Settings" → "Environment Variables"
+3. Add each required variable:
 
-## Step 3: Configure Environment Variables
+#### NEXTAUTH_URL
+- **Key**: `NEXTAUTH_URL`
+- **Value**: `https://your-app-name.vercel.app` (replace with your actual Vercel URL)
+- **Environment**: Production
 
-### Required Environment Variables
-
-Set up the following environment variables in Vercel:
+#### NEXTAUTH_SECRET
+- **Key**: `NEXTAUTH_SECRET`
+- **Value**: Generate with `openssl rand -base64 32` or use a 32+ character random string
+- **Environment**: Production
 
 #### Database Configuration
-```bash
-DATABASE_PROVIDER=postgresql
-DATABASE_URL=postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres
-```
-
-#### NextAuth Configuration
-```bash
-NEXTAUTH_URL=https://your-app-name.vercel.app
-NEXTAUTH_SECRET=[GENERATE-RANDOM-SECRET]
-```
+- **DATABASE_PROVIDER**: `postgresql`
+- **DATABASE_URL**: Your Supabase connection string (see Supabase setup below)
 
 #### Supabase Configuration
-```bash
-NEXT_PUBLIC_SUPABASE_URL=https://[PROJECT-REF].supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=[YOUR-ANON-KEY]
-SUPABASE_SERVICE_ROLE_KEY=[YOUR-SERVICE-ROLE-KEY]
+- **SUPABASE_URL**: Your Supabase project URL
+- **SUPABASE_ANON_KEY**: Your Supabase anonymous key
+
+### 4. Setup Supabase (Database)
+
+1. Go to [supabase.com](https://supabase.com)
+2. Create a new project
+3. Wait for setup to complete
+4. Go to Settings → Database
+5. Copy the connection string
+6. Go to Settings → API
+7. Copy the Project URL and anon key
+
+### 5. Configure OAuth Providers (Optional)
+
+#### Google OAuth
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a project or select existing
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add your Vercel URL to authorized origins
+6. Add `https://your-app.vercel.app/api/auth/callback/google` to redirect URIs
+
+#### GitHub OAuth
+1. Go to GitHub Settings → Developer settings → OAuth Apps
+2. Create a new OAuth App
+3. Set Homepage URL: `https://your-app.vercel.app`
+4. Set Authorization callback URL: `https://your-app.vercel.app/api/auth/callback/github`
+
+### 6. Redeploy
+
+After configuring environment variables:
+
+1. Go to Deployments tab in Vercel
+2. Click "..." on the latest deployment
+3. Click "Redeploy"
+4. Check "Use existing Build Cache"
+5. Click "Redeploy"
+
+## Build Process
+
+The application now includes automatic Prisma generation:
+
+```json
+{
+  "scripts": {
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate"
+  }
+}
 ```
 
-#### OAuth Provider Configuration
-```bash
-# GitHub OAuth (if using)
-GITHUB_ID=[YOUR-GITHUB-CLIENT-ID]
-GITHUB_SECRET=[YOUR-GITHUB-CLIENT-SECRET]
-
-# Google OAuth (if using)
-GOOGLE_CLIENT_ID=[YOUR-GOOGLE-CLIENT-ID]
-GOOGLE_CLIENT_SECRET=[YOUR-GOOGLE-CLIENT-SECRET]
-```
-
-### Adding Environment Variables in Vercel
-
-1. **Navigate to Project Settings**
-   - In your Vercel project dashboard, click "Settings"
-   - Go to "Environment Variables" section
-
-2. **Add Each Variable**
-   - Click "Add New" for each environment variable
-   - **Name**: Enter the variable name (e.g., `DATABASE_URL`)
-   - **Value**: Enter the variable value
-   - **Environments**: Select "Production" (and "Preview" if needed)
-   - Click "Save"
-
-3. **Verify All Variables Are Set**
-   - Ensure all required variables from `.env.example` are configured
-   - Double-check sensitive values like database passwords and secrets
-
-## Step 4: Configure OAuth Providers
-
-### GitHub OAuth Setup
-
-1. **Create GitHub OAuth App**
-   - Go to GitHub Settings → Developer settings → OAuth Apps
-   - Click "New OAuth App"
-   - Fill in details:
-     - **Application name**: Your app name
-     - **Homepage URL**: `https://your-app-name.vercel.app`
-     - **Authorization callback URL**: `https://your-app-name.vercel.app/api/auth/callback/github`
-   - Click "Register application"
-
-2. **Get Client Credentials**
-   - Copy the "Client ID"
-   - Generate and copy the "Client Secret"
-   - Add these to your Vercel environment variables
-
-### Google OAuth Setup
-
-1. **Create Google OAuth Credentials**
-   - Go to [Google Cloud Console](https://console.cloud.google.com/)
-   - Create a new project or select existing one
-   - Enable Google+ API
-   - Go to "Credentials" → "Create Credentials" → "OAuth client ID"
-   - Choose "Web application"
-   - Add authorized redirect URIs:
-     - `https://your-app-name.vercel.app/api/auth/callback/google`
-
-2. **Configure Credentials**
-   - Copy the Client ID and Client Secret
-   - Add these to your Vercel environment variables
-
-## Step 5: Deploy and Test
-
-### Initial Deployment
-
-1. **Trigger Deployment**
-   - After configuring environment variables, click "Deploy" in Vercel
-   - Or push a new commit to trigger automatic deployment
-
-2. **Monitor Build Process**
-   - Watch the build logs in Vercel dashboard
-   - Check for any build errors or warnings
-
-3. **Verify Deployment**
-   - Once deployed, visit your Vercel URL
-   - Test basic functionality and authentication
-
-### Database Migration
-
-Your database migrations should run automatically during the build process. If they don't:
-
-1. **Manual Migration** (if needed)
-   ```bash
-   # Connect to your production database and run migrations
-   npx prisma migrate deploy
-   ```
-
-2. **Verify Database Schema**
-   - Check your Supabase dashboard
-   - Ensure all tables are created correctly
-
-## Step 6: Set Up Automatic Deployments
-
-### GitHub Integration
-
-Vercel automatically sets up GitHub integration:
-
-1. **Automatic Deployments**
-   - Pushes to `main` branch trigger production deployments
-   - Pull requests create preview deployments
-
-2. **Branch Protection** (Recommended)
-   - Set up branch protection rules in GitHub
-   - Require pull request reviews before merging
-
-### Deployment Settings
-
-1. **Production Branch**
-   - Ensure "main" is set as your production branch
-   - Configure in Vercel project settings → Git
-
-2. **Build Settings**
-   - Build Command: `yarn build` (configured in vercel.json)
-   - Install Command: `yarn install`
-   - Output Directory: `.next` (default for Next.js)
-
-## Step 7: Configure Custom Domain (Optional)
-
-### Add Custom Domain
-
-1. **Domain Settings**
-   - Go to project settings → Domains
-   - Click "Add Domain"
-   - Enter your custom domain
-
-2. **DNS Configuration**
-   - Add CNAME record pointing to `cname.vercel-dns.com`
-   - Or add A record pointing to Vercel's IP addresses
-
-3. **SSL Certificate**
-   - Vercel automatically provisions SSL certificates
-   - Wait for DNS propagation and certificate issuance
-
-## Step 8: Monitor and Maintain
-
-### Performance Monitoring
-
-1. **Vercel Analytics**
-   - Enable Vercel Analytics in project settings
-   - Monitor page load times and user interactions
-
-2. **Error Tracking**
-   - Set up error tracking (Sentry, LogRocket, etc.)
-   - Monitor application errors and performance issues
-
-### Deployment Health Checks
-
-1. **Function Logs**
-   - Monitor function execution logs in Vercel dashboard
-   - Check for database connection issues or API errors
-
-2. **Build Notifications**
-   - Set up Slack or email notifications for deployment status
-   - Configure in project settings → Notifications
+This ensures the Prisma client is generated during the Vercel build process.
 
 ## Troubleshooting
 
-### Common Deployment Issues
+### Build Errors
 
-1. **Build Failures**
-   ```bash
-   # Check build logs for specific errors
-   # Common issues:
-   # - Missing environment variables
-   # - TypeScript errors
-   # - Dependency conflicts
-   ```
+#### "Failed to collect page data"
+- **Cause**: Missing environment variables
+- **Solution**: Ensure all required environment variables are set in Vercel dashboard
 
-2. **Database Connection Issues**
-   - Verify DATABASE_URL format
-   - Check Supabase connection limits
-   - Ensure database is accessible from Vercel's regions
+#### "Prisma Client not generated"
+- **Cause**: Build cache issues
+- **Solution**: Clear build cache and redeploy
 
-3. **Authentication Problems**
-   - Verify OAuth callback URLs match exactly
-   - Check NEXTAUTH_URL is set correctly
-   - Ensure NEXTAUTH_SECRET is properly generated
+#### "Invalid NEXTAUTH_URL"
+- **Cause**: Incorrect URL format
+- **Solution**: Use your actual Vercel URL: `https://your-app-name.vercel.app`
 
-### Environment Variable Issues
+### Runtime Errors
 
-1. **Missing Variables**
-   - Compare with `.env.example`
-   - Check variable names for typos
-   - Ensure all required variables are set
+#### Authentication not working
+- **Check**: NEXTAUTH_URL matches your domain
+- **Check**: NEXTAUTH_SECRET is set and secure
+- **Check**: OAuth callback URLs are correct
 
-2. **Variable Precedence**
-   - Production variables override preview variables
-   - System environment variables take precedence
+#### Database connection errors
+- **Check**: DATABASE_URL is correct
+- **Check**: Supabase project is active
+- **Check**: DATABASE_PROVIDER is set to "postgresql"
 
-### Performance Issues
+### Environment Variable Validation
 
-1. **Cold Starts**
-   - Serverless functions may have cold start delays
-   - Consider upgrading to Pro plan for better performance
+The app includes comprehensive environment validation:
 
-2. **Database Connection Pooling**
-   - Monitor database connection usage
-   - Implement connection pooling if needed
+- **Missing variables**: Clear error messages
+- **Invalid formats**: Specific format requirements
+- **Security checks**: Warns about weak secrets
 
-## Security Best Practices
+## Monitoring
 
-### Environment Variable Security
+### Vercel Analytics
 
-1. **Sensitive Data**
-   - Never commit secrets to version control
-   - Use Vercel's encrypted environment variables
-   - Rotate secrets regularly
+Enable Vercel Analytics for monitoring:
 
-2. **Access Control**
-   - Limit team access to production environment variables
-   - Use different secrets for preview and production
+1. Go to your project dashboard
+2. Click "Analytics" tab
+3. Enable analytics
 
-### Application Security
+### Error Tracking
 
-1. **HTTPS Enforcement**
-   - Vercel enforces HTTPS by default
-   - Ensure all external API calls use HTTPS
+The application includes built-in error tracking:
 
-2. **CORS Configuration**
-   - Review CORS headers in vercel.json
-   - Restrict origins in production
+- Environment validation errors
+- Database connection issues
+- Authentication failures
 
-## Advanced Configuration
+## Security Considerations
 
-### Custom Build Process
+### Secrets Management
 
-If you need custom build steps:
+- Use strong, random secrets (32+ characters)
+- Rotate secrets regularly
+- Never commit secrets to version control
 
-```json
-{
-  "buildCommand": "yarn build && yarn custom-build-step",
-  "installCommand": "yarn install --frozen-lockfile"
-}
+### Environment Separation
+
+- Use different secrets for different environments
+- Separate development and production databases
+- Use environment-specific OAuth applications
+
+### HTTPS
+
+- Always use HTTPS in production
+- Vercel provides automatic HTTPS
+- Update OAuth callback URLs to use HTTPS
+
+## Performance Optimization
+
+### Build Optimization
+
+- Prisma client is generated at build time
+- Static pages are pre-rendered where possible
+- Edge functions are used for API routes
+
+### Runtime Optimization
+
+- Database connection pooling (handled by Supabase)
+- Environment variable caching
+- Minimal runtime validation overhead
+
+## Support
+
+If you encounter issues:
+
+1. Check the [troubleshooting section](#troubleshooting)
+2. Review Vercel build logs
+3. Check environment variable configuration
+4. Verify Supabase connection
+
+## Example .env.local for Development
+
+```bash
+# Development Configuration
+NODE_ENV=development
+DATABASE_PROVIDER=sqlite
+DATABASE_URL=file:./prisma/dev.db
+NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_SECRET=development-secret-key
+
+# Optional OAuth for development
+# GOOGLE_CLIENT_ID=your-dev-google-client-id
+# GOOGLE_CLIENT_SECRET=your-dev-google-client-secret
+# GITHUB_CLIENT_ID=your-dev-github-client-id
+# GITHUB_CLIENT_SECRET=your-dev-github-client-secret
 ```
 
-### Function Configuration
+## Production Checklist
 
-Optimize serverless functions:
+- [ ] Repository pushed to GitHub
+- [ ] Vercel project created and connected
+- [ ] All required environment variables set
+- [ ] Supabase project created and configured
+- [ ] OAuth providers configured (if using)
+- [ ] NEXTAUTH_URL points to your Vercel domain
+- [ ] NEXTAUTH_SECRET is secure (32+ characters)
+- [ ] First deployment completed successfully
+- [ ] Authentication tested
+- [ ] Database connection verified
 
-```json
-{
-  "functions": {
-    "app/api/**/*.js": {
-      "maxDuration": 30,
-      "memory": 1024
-    }
-  }
-}
-```
+## Next Steps
 
-### Edge Functions
+After successful deployment:
 
-For better performance, consider Edge Functions:
-
-```json
-{
-  "functions": {
-    "app/api/edge/**/*.js": {
-      "runtime": "edge"
-    }
-  }
-}
-```
-
-## Getting Help
-
-- **Vercel Documentation**: [vercel.com/docs](https://vercel.com/docs)
-- **Community Support**: [github.com/vercel/vercel/discussions](https://github.com/vercel/vercel/discussions)
-- **Discord Community**: [vercel.com/discord](https://vercel.com/discord)
-
----
-
-**Next Steps**: After successful deployment, monitor your application's performance and set up proper monitoring and alerting systems.
+1. Test all authentication flows
+2. Verify database operations
+3. Configure custom domain (optional)
+4. Set up monitoring and analytics
+5. Configure CI/CD for future updates

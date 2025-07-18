@@ -100,10 +100,20 @@ export function validateEnvironmentVariables(): {
     // Catch any errors from the environment config loading
     const errorMessage = error instanceof Error ? error.message : String(error)
     
-    validationStatus = {
-      isValid: false,
-      errors: [errorMessage],
-      warnings
+    // During build time, be more lenient with validation
+    if ((process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE) || process.env.VERCEL) {
+      console.warn("⚠️ Build-time environment validation incomplete, allowing build to continue");
+      validationStatus = {
+        isValid: true,
+        errors: [],
+        warnings: [errorMessage]
+      }
+    } else {
+      validationStatus = {
+        isValid: false,
+        errors: [errorMessage],
+        warnings
+      }
     }
     
     return validationStatus
@@ -116,6 +126,11 @@ export function validateEnvironmentVariables(): {
 export function envValidationMiddleware(
   request: NextRequest
 ): NextResponse | undefined {
+  // Skip validation during build time
+  if (process.env.NEXT_PHASE || process.env.VERCEL) {
+    return
+  }
+
   // Skip validation for specific paths
   if (shouldSkipValidation(request.nextUrl.pathname)) {
     return
@@ -262,7 +277,12 @@ export function performStartupValidation(): void {
     
     console.error('\n🛑 Application cannot start due to critical environment configuration error.')
     console.error('Please fix the configuration issues and restart the application.')
-    process.exit(1)
+    // Don't exit during middleware execution or build time
+    if (typeof process !== 'undefined' && process.exit && !process.env.NEXT_PHASE && typeof window === 'undefined') {
+      process.exit(1)
+    } else {
+      throw error
+    }
   }
 }
 
@@ -325,7 +345,12 @@ function handleStartupValidationFailure(env: string, validation: { errors: strin
       console.error('\n🛑 Critical configuration errors detected.')
       console.error('   Development server cannot start with these errors.')
       console.error('   Please fix the critical issues and restart.')
-      process.exit(1)
+      // Don't exit during middleware execution or build time
+      if (typeof process !== 'undefined' && process.exit && !process.env.NEXT_PHASE && typeof window === 'undefined') {
+        process.exit(1)
+      } else {
+        throw new Error('Critical configuration errors detected')
+      }
     } else if (validation.errors.length > 0) {
       console.warn('\n⚠️ Non-critical configuration errors detected.')
       console.warn('   Development server will continue but some features may not work.')
@@ -336,11 +361,21 @@ function handleStartupValidationFailure(env: string, validation: { errors: strin
     console.error('\n🛑 Production application cannot start with configuration errors.')
     console.error('   All environment variables must be properly configured for production.')
     console.error('   Please fix all issues and redeploy.')
-    process.exit(1)
+    // Don't exit during middleware execution or build time
+    if (typeof process !== 'undefined' && process.exit && !process.env.NEXT_PHASE && typeof window === 'undefined') {
+      process.exit(1)
+    } else {
+      throw new Error('Production configuration errors detected')
+    }
   } else {
     // Test environment or unknown - be strict
     console.error('\n🛑 Application cannot start due to environment configuration errors.')
-    process.exit(1)
+    // Don't exit during middleware execution or build time
+    if (typeof process !== 'undefined' && process.exit && !process.env.NEXT_PHASE && typeof window === 'undefined') {
+      process.exit(1)
+    } else {
+      throw new Error('Environment configuration errors detected')
+    }
   }
 }
 

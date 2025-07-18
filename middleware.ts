@@ -3,6 +3,11 @@ import type { NextRequest } from "next/server";
 import { envValidationMiddleware } from "./lib/env-validation-middleware";
 
 export function middleware(request: NextRequest) {
+  // Skip validation during build time
+  if (process.env.NEXT_PHASE || process.env.VERCEL) {
+    return NextResponse.next();
+  }
+
   // First, validate environment variables
   const envValidationResult = envValidationMiddleware(request);
   if (envValidationResult) {

@@ -315,7 +315,24 @@ let _config: EnvironmentConfig | null = null;
 
 export function getEnvironmentConfig(): EnvironmentConfig {
   if (!_config) {
-    _config = loadEnvironmentConfig();
+    try {
+      _config = loadEnvironmentConfig();
+    } catch (error) {
+      // During build time, we might not have all environment variables
+      // Create a minimal config for build-time compatibility
+      if (process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE) {
+        console.warn("⚠️ Build-time environment configuration incomplete, using minimal config");
+        _config = {
+          nodeEnv: 'production',
+          databaseUrl: process.env.DATABASE_URL || 'file:./prisma/dev.db',
+          databaseProvider: (process.env.DATABASE_PROVIDER as DatabaseProvider) || 'sqlite',
+          nextAuthUrl: process.env.NEXTAUTH_URL || 'http://localhost:3000',
+          nextAuthSecret: process.env.NEXTAUTH_SECRET || 'development-secret',
+        };
+      } else {
+        throw error;
+      }
+    }
   }
   return _config;
 }

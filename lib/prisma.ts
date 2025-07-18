@@ -73,6 +73,14 @@ function initializePrismaClient(): PrismaClient {
     return client
   } catch (error) {
     console.error('❌ Failed to initialize Prisma client:', error)
+    
+    // During build time on Vercel, Prisma client might not be generated yet
+    if (process.env.VERCEL && process.env.NEXT_PHASE) {
+      console.warn('⚠️ Prisma client initialization failed during Vercel build - this is expected')
+      // Return a mock client that won't be used during build
+      return new PrismaClient() as any
+    }
+    
     throw error
   }
 }

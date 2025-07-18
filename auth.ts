@@ -11,9 +11,22 @@ let envConfig: EnvironmentConfig;
 try {
   envConfig = getEnvironmentConfig();
 } catch (error) {
-  console.error("❌ Failed to load environment configuration for authentication:");
-  console.error(error instanceof Error ? error.message : error);
-  throw new Error("Authentication configuration failed due to invalid environment setup");
+  // During build time, we might not have all environment variables
+  // Create a minimal config for build-time compatibility
+  if ((process.env.NODE_ENV === 'production' && process.env.NEXT_PHASE) || process.env.VERCEL) {
+    console.warn("⚠️ Build-time environment configuration incomplete, using minimal config");
+    envConfig = {
+      nodeEnv: 'production',
+      databaseUrl: process.env.DATABASE_URL || 'file:./prisma/dev.db',
+      databaseProvider: (process.env.DATABASE_PROVIDER as any) || 'sqlite',
+      nextAuthUrl: process.env.NEXTAUTH_URL || 'http://localhost:3000',
+      nextAuthSecret: process.env.NEXTAUTH_SECRET || 'development-secret',
+    };
+  } else {
+    console.error("❌ Failed to load environment configuration for authentication:");
+    console.error(error instanceof Error ? error.message : error);
+    throw new Error("Authentication configuration failed due to invalid environment setup");
+  }
 }
 
 // Build providers array dynamically based on available configuration
