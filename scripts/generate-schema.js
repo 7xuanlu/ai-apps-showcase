@@ -56,13 +56,28 @@ try {
   let schemaTemplate = fs.readFileSync(schemaTemplatePath, 'utf8');
   
   // Replace the provider placeholder with the actual provider
-  const generatedSchema = schemaTemplate.replace('PROVIDER_PLACEHOLDER', databaseProvider);
+  let generatedSchema = schemaTemplate.replace('PROVIDER_PLACEHOLDER', databaseProvider);
+  
+  // Handle database-specific field transformations
+  if (databaseProvider === 'postgresql') {
+    // Transform to PostgreSQL format to match existing Supabase migration
+    generatedSchema = generatedSchema
+      .replace(/createdAt DateTime @default\(now\(\)\)/g, 'created_at DateTime @default(now()) @db.Timestamptz(6)')
+      .replace(/updatedAt DateTime @updatedAt/g, 'updated_at DateTime @updatedAt @db.Timestamptz(6)')
+      // Add directUrl for Supabase connection pooling
+      .replace(/url\s+= env\("DATABASE_URL"\)/g, 'url       = env("DATABASE_URL")\n  directUrl = env("DIRECT_URL")');
+  }
+  // For SQLite, keep the original camelCase format
   
   // Write the generated schema
   fs.writeFileSync(schemaOutputPath, generatedSchema);
   
   console.log(`Generated Prisma schema with provider: ${databaseProvider}`);
   console.log(`Database URL format: ${databaseProvider === 'sqlite' ? 'file:./prisma/dev.db' : 'postgresql://user:password@host:port/database'}`);
+  
+  if (databaseProvider === 'postgresql') {
+    console.log('Note: PostgreSQL schema uses snake_case field names to match existing migration');
+  }
 } catch (error) {
   console.error('Error generating schema:', error.message);
   process.exit(1);
