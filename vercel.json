@@ -1,4 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "yarn db:generate-schema:postgresql && next build"
+  "buildCommand": "yarn build:production-schema && yarn prisma generate && next build"
 }
