@@ -12,7 +12,7 @@ export default function LandingPage() {
         place.
       </div>
       <Button href="/demos" size="landing">
-        View Demos
+        View Showcase
       </Button>
     </main>
   );
