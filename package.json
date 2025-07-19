@@ -48,7 +48,7 @@
     "bcryptjs": "^3.0.2",
     "dotenv": "^8.2.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.44.1",
-    "next": "14.1.0",
+    "next": "14.2.30",
     "next-auth": "4.24.5",
     "node-fetch": "^2.6.0",
     "prisma": "^6.12.0",
