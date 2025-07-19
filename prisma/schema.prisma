@@ -17,6 +17,11 @@ datasource db {
   // For PostgreSQL: "postgresql://user:password@host:port/database?schema=public"
   url      = env("DATABASE_URL")
   
+  // Direct connection URL for Prisma migrations and schema operations
+  // Required for Supabase connection pooling setup
+  // Use session mode (port 5432) for direct operations
+  directUrl = env("DIRECT_URL")
+  
   // Additional configuration for PostgreSQL in production
   // These settings will be ignored for SQLite
   // connectionLimit = 5

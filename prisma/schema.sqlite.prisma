@@ -1,0 +1,26 @@
+// This is your Prisma schema file for SQLite (Development)
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  // Enable preview features if needed for specific database capabilities
+  // previewFeatures = []
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+  // SQLite-specific configuration
+  // relationMode = "prisma" // Uncomment if needed for complex relations
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+} 
